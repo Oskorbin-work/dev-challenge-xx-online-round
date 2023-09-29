@@ -66,6 +66,13 @@ def get_necessary_sheet(sheet_title):
     """
     return f"select * from sheets where title='{sheet_title}' limit 1"
 
+@request_bd_select
+def get_necessary_sheet_cell(sheet_id, cell_name):
+    """
+    get_necessary_sheet_cell does get necessary sheet cell information
+    :return: necessary sheet cell information
+    """
+    return f"select value,result from cells where sheet_id='{sheet_id}' and name='{cell_name}'  limit 1"
 
 @request_bd_insert
 def insert_sheet(sheet_title):
@@ -74,4 +81,13 @@ def insert_sheet(sheet_title):
     :return: sql-insert
     """
     return f"insert into sheets (title) values ('{sheet_title}')"
+
+
+@request_bd_insert
+def insert_sheet_cell(sheet_id, cell_name):
+    """
+    insert_sheet does insert new sheet
+    :return: sql-insert
+    """
+    return f"insert into cells (sheet_id,name)  values ('{sheet_id}','{cell_name}')"
 

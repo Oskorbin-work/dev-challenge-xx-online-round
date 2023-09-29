@@ -108,10 +108,80 @@ def test_get_necessary_sheet():
     """
     print("\n" + test_get_necessary_sheet.__name__)
     sheet_name = "Test_sheet"
-    cells = (b"{ \"var3\": { \"value\": \"value3_test\", \"result\": \"value1_test\" }, \"var2\": { \"value\": "
-               b"\"value2_test\", \"result\": \"value2_test\" } }")
     res = client.get(ENDPOINT + sheet_name, method=['GET'])
-    res.set_data(cells)
     # Checks that def work is ok
-    assert res.status_code == 200, "cell of sheet are missing"
+    assert res.status_code == 200, "cells of sheet are missing"
     print("–   " + ENDPOINT + "+'<sheet_title>' has status code - 200")
+
+
+def test_get_necessary_wrong_sheet():
+    """
+    test_get_necessary_wrong_sheet checks status code 404 while url ENDPOINT(detail in file settings.py)
+    + '<sheet_wrong_title>'
+    """
+    print("\n" + test_get_necessary_sheet.__name__)
+    sheet_name = "Test_wrong_sheet"
+    res = client.get(ENDPOINT + sheet_name, method=['GET'])
+    # Checks that def work is ok
+    assert res.status_code == 404, "cells of sheet are creating"
+    print("–   " + ENDPOINT + "+'<sheet_title>' has status code - 404")
+
+
+# ------------------------------------------------
+# test def get_necessary_sheet
+def test_get_necessary_sheet_cell():
+    """
+    test_get_necessary_sheet checks status code 200 while url
+    ENDPOINT(detail in file settings.py) + '<sheet_title>' + '<cell_name>'
+    """
+    print("\n" + test_get_necessary_sheet_cell.__name__)
+    sheet_name = "Test_sheet/"
+    cell_name = "var1/"
+    res = client.get(ENDPOINT + sheet_name + cell_name, method=['GET'])
+    # Checks that def work is ok
+    assert res.status_code == 200, "cell of sheet is missing"
+    print("–   " + ENDPOINT + "+'<sheet_title>' + '<cell_name>' has status code - 200")
+
+
+def test_get_necessary_wrong_sheet_cell():
+    """
+    test_get_necessary_sheet checks status code 404 while url
+    ENDPOINT(detail in file settings.py) + '<sheet_wrong_title>' + '<cell_name>'
+    """
+    print("\n" + test_get_necessary_wrong_sheet_cell.__name__)
+    sheet_name = "Test_wrong_sheet/"
+    cell_name = "var1/"
+    res = client.get(ENDPOINT + sheet_name + cell_name, method=['GET'])
+    # Checks that def work is ok
+    assert res.status_code == 404, "sheet is creating"
+    print("–   " + ENDPOINT + "+'<sheet_wrong_title>' + '<sheet_title>' has status code - 404")
+
+
+def test_get_necessary_sheet_wrong_cell():
+    """
+    test_get_necessary_sheet checks status code 404 while url
+    ENDPOINT(detail in file settings.py) + '<sheet_title>' + '<cell_wrong_name>'
+    """
+    print("\n" + test_get_necessary_sheet_wrong_cell.__name__)
+    sheet_name = "Test_sheet/"
+    cell_name = "wrong_var1/"
+    res = client.get(ENDPOINT + sheet_name + cell_name, method=['GET'])
+    # Checks that def work is ok
+    assert res.status_code == 404, "wrong is creating"
+    print("–   " + ENDPOINT + "+'<sheet_title>' + '<sheet_wrong_title>' has status code - 404")
+
+
+def test_get_necessary_wrong_sheet_wrong_cell():
+    """
+    test_get_necessary_sheet checks status code 404 while url
+    ENDPOINT(detail in file settings.py) + '<sheet_wrong_title>' + '<cell_wrong_name>'
+    """
+    print("\n" + test_get_necessary_wrong_sheet_wrong_cell.__name__)
+    sheet_name = "Test_wrong_sheet/"
+    cell_name = "wrong_wrong_var1/"
+    data_of_cell = (b"{\"value\": \"value1_test\",\"result\": \"value1_test\"}")
+    res = client.get(ENDPOINT + sheet_name + cell_name, method=['GET'])
+    res.set_data(data_of_cell)
+    # Checks that def work is ok
+    assert res.status_code == 404, "wrong is creating"
+    print("–   " + ENDPOINT + "+'<sheet_wrong_title>' + '<sheet_wrong_title>' has status code - 404")

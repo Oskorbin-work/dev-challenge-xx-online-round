@@ -35,5 +35,23 @@
 8) test_get_sheets_id_type_data -- checks every id sheet is integer.
 9) test_get_sheets_title_type_data -- checks every title sheet is integer.
 
-**Тесты:  GET /api/v1/:sheet_id**
+**Тесты:  "GET /api/v1/:sheet_id" or "GET /api/v1/:sheet_id/"**
+
+_Заметки: sheet_wrong_title is wrong sheet._ 
+
 1) test_get_sheets -- checks status code 200 while url ENDPOINT(detail in file settings.py) + '<sheet_title>'
+2) test_get_necessary_wrong_sheet -- checks status code 404 while url ENDPOINT(detail in file settings.py)
++ '<sheet_wrong_title>' 
+
+**Тесты: "GET /api/v1/:sheet_id/:cell_id" or "/api/v1/:sheet_id/:cell_id/"**
+
+_Заметки: sheet_wrong_title is wrong sheet. cell_wrong_title is wrong cell of sheet._ 
+
+1) test_get_necessary_sheet_cell -- checks status code 200 while url
+    ENDPOINT(detail in file settings.py) + '<sheet_title>' + '<cell_name>'
+2) test_get_necessary_wrong_sheet_cell -- checks status code 404 while url
+    ENDPOINT(detail in file settings.py) + '<sheet_wrong_title>' + '<cell_name>'
+3) test_get_necessary_sheet_wrong_cell -- checks status code 404 while url
+    ENDPOINT(detail in file settings.py) + '<sheet_title>' + '<cell_wrong_name>'
+4) test_get_necessary_wrong_sheet_wrong_cell -- checks status code 404 while url
+    ENDPOINT(detail in file settings.py) + '<sheet_wrong_title>' + '<cell_wrong_name>'
