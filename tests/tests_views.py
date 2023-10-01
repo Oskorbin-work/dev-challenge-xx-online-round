@@ -1,4 +1,6 @@
 # Import project Modules
+import json
+
 from views import client
 from settings import ENDPOINT
 
@@ -178,10 +180,177 @@ def test_get_necessary_wrong_sheet_wrong_cell():
     """
     print("\n" + test_get_necessary_wrong_sheet_wrong_cell.__name__)
     sheet_name = "Test_wrong_sheet/"
-    cell_name = "wrong_wrong_var1/"
+    cell_name = "wrong_wrong_var/"
     data_of_cell = (b"{\"value\": \"value1_test\",\"result\": \"value1_test\"}")
     res = client.get(ENDPOINT + sheet_name + cell_name, method=['GET'])
     res.set_data(data_of_cell)
     # Checks that def work is ok
     assert res.status_code == 404, "wrong is creating"
     print("–   " + ENDPOINT + "+'<sheet_wrong_title>' + '<sheet_wrong_title>' has status code - 404")
+
+
+# ------------------------------------------------
+# test def post_necessary_sheet
+
+def test_post_sheet():
+    """
+    test_post_sheet checks change old title to a new title
+    """
+    print("\n" + test_post_sheet.__name__)
+    data = {
+        "title": "zrada"
+    }
+    res = client.post(ENDPOINT+"Test_sheet/", json=data)
+
+    assert res.status_code == 200, "not changes title sheet"
+    data = {
+        "title": "Test_sheet"
+    }
+    res = client.post(ENDPOINT+"zrada/", json=data)
+
+    assert res.status_code == 200, "not changes title sheet"
+
+
+def test_post_sheet_not_exist_title():
+    """
+    test_post_sheet_not_exist_title checks change if old title not exist
+    """
+    print("\n" + test_post_sheet_not_exist_title.__name__)
+    data = {
+        "title": "zrada"
+    }
+    res = client.post(ENDPOINT+"Test_sheet434345/", json=data)
+    assert res.status_code == 404, "finds not exist sheet"
+
+
+def test_post_sheet_not_json_title():
+    """
+     test_post_sheet_not_json_title checks POST json not has 'title'
+    """
+    print("\n" + test_post_sheet_not_json_title.__name__)
+    data = {
+        "title1": "zrada"
+    }
+    res = client.post(ENDPOINT+"Test_sheet/", json=data)
+    assert res.status_code == 422, "wrong with post json. title1 is not title"
+
+
+def test_post_sheet_wrong_name_as_empty():
+    """
+     test_post_sheet_not_json_title checks POST json has 'title' but it is ""
+    """
+    print("\n" + test_post_sheet_wrong_name_as_empty.__name__)
+    data = {
+        "title": ""
+    }
+    res = client.post(ENDPOINT+"Test_sheet/", json=data)
+
+    assert res.status_code == 422, "post json 'title' is empty"
+
+
+def test_post_sheet_wrong_len_name_32_and_more():
+    """
+      test_post_sheet_wrong_len_name_32_and_more checks POST json has len 'title' =>32
+     """
+    print("\n" + test_post_sheet_wrong_len_name_32_and_more.__name__)
+    data = {
+        "title": "bnflmnbklfnbkfdlxbfgnmhdl;ckxmbnlfgdmgklbnfjgkldgjvmb jfglkndmcxvbnfjgidpolkvjbnfgkdlngvbfj"
+    }
+    res = client.post(ENDPOINT + "Test_sheet/", json=data)
+
+    assert res.status_code == 422, "len title not has len =>32"
+
+
+def test_post_sheet_wrong_name_contains_slash():
+    """
+      test_post_sheet_wrong_name_contains_slash checks POST json has 'title' and it contains '\'
+     """
+    print("\n" + test_post_sheet_wrong_name_contains_slash.__name__)
+    data = {
+        "title": "/title"
+    }
+    res = client.post(ENDPOINT + "Test_sheet/", json=data)
+
+    assert res.status_code == 422, " title not has symbols /"
+
+
+def test_post_sheet_wrong_name_contains_colon_question_mark():
+    """
+      test_post_sheet_wrong_name_contains_colon_question_mark checks POST json has 'title' and it contains '?'
+     """
+    print("\n" + test_post_sheet_wrong_name_contains_colon_question_mark.__name__)
+    data = {
+        "title": "?title"
+    }
+    res = client.post(ENDPOINT + "Test_sheet/", json=data)
+
+    assert res.status_code == 422, " title not has symbols ?"
+
+
+def test_post_sheet_wrong_name_contains_asterisk_sign():
+    """
+      test_post_sheet_wrong_name_contains_asterisk_sign checks POST json has 'title' and it contains '*'
+     """
+    print("\n" + test_post_sheet_wrong_name_contains_asterisk_sign.__name__)
+    data = {
+        "title": "*title"
+    }
+    res = client.post(ENDPOINT + "Test_sheet/", json=data)
+
+    assert res.status_code == 422, " title not has symbols *"
+
+
+def test_post_sheet_wrong_name_contains_colon_sign():
+    """
+      test_post_sheet_wrong_name_contains_colon_sign checks POST json has 'title' and it contains ':'
+     """
+    print("\n" + test_post_sheet_wrong_name_contains_colon_sign.__name__)
+    data = {
+        "title": "ti:tle"
+    }
+    res = client.post(ENDPOINT + "Test_sheet/", json=data)
+
+    assert res.status_code == 422, " title not has symbols :"
+
+
+def test_post_sheet_wrong_name_contains_colon_closing_parenthesis_right():
+    """
+      test_post_sheet_wrong_name_contains_colon_closing_parenthesis_right checks POST json has 'title' and it contains '['
+     """
+    print("\n" + test_post_sheet_wrong_name_contains_colon_closing_parenthesis_right.__name__)
+    data = {
+        "title": "[title"
+    }
+    res = client.post(ENDPOINT + "Test_sheet/", json=data)
+
+    assert res.status_code == 422, " title not has symbols ["
+
+
+def test_post_sheet_wrong_name_contains_colon_closing_parenthesis_left():
+    """
+      test_post_sheet_wrong_name_contains_colon_closing_parenthesis_left checks POST json has 'title' and it contains ']'
+     """
+    print("\n" + test_post_sheet_wrong_name_contains_colon_closing_parenthesis_left.__name__)
+    data = {
+        "title": "tit]le"
+    }
+    res = client.post(ENDPOINT + "Test_sheet/", json=data)
+
+    assert res.status_code == 422, " title not has symbol ]"
+
+
+def test_post_sheet_wrong_name_as_History():
+    """
+      test_post_sheet_wrong_name_as_History checks POST json has 'title' and it is 'History'
+     """
+    print("\n" + test_post_sheet_wrong_name_as_History.__name__)
+    data = {
+        "title": "History"
+    }
+    res = client.post(ENDPOINT + "Test_sheet/", json=data)
+
+    assert res.status_code == 422, " title not has name as 'History'"
+
+
+
+

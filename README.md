@@ -7,22 +7,61 @@
       * GET /api/v1/
         <br/>
         Response: {"Sheets":[{"id":1,"title":"Sheet1"},{"id":2,"title":"Sheet2"}]
-2) GET /api/v1/:sheet_id
-   1) 200 if the sheet is present
-   2) 404 if the sheet is missing
-   <br/>
-   Example:
-   {
-  "var1": {
-    "value": "value1_test",
-    "result": "value1_test"
-  },
-  "var2": {
-    "value": "value2_test",
-    "result": "value2_test"
-  }
-}
+2) GET /api/v1/:sheet_id or GET /api/v1/:sheet_id/ 
+    1) 200 if the sheet is present
+    2) 404 if the sheet is missing
+          <br/>
+       Example:
 
+       {
+      "var1": {
+        "value": "value1_test",
+        "result": "value1_test"
+      },
+      "var2": {
+        "value": "value2_test",
+        "result": "value2_test"
+      }
+        }
+3) GET /api/v1/:sheet_id/:cell_id or GET /api/v1/:sheet_id/:cell_id/ 
+   1) 200 if the value present
+   2) 404 if the value is missing
+          <br/>
+
+          Examples:
+           GET /api/v1/devchallenge-xx/var1 
+           Response: {“value”: “1”, result: “1”} 
+           GET /api/v1/devchallenge-xx/var1 
+           Response: {“value”: “2”, result: “2”} 
+           GET /api/v1/devchallenge-xx/var3 
+           Response: {“value”: “=var1+var2”, result: “3”}
+   
+   4) POST /api/v1/:sheet_id/ or POST /api/v1:sheet_id/ accept params {“value”: “1”} implements UPSERT strategy (update or insert) for both sheet_id
+      1) 201 if the title sheet is OK
+      2) 422 if the title sheet is not OK e.g. new title sheet is not suitable (read https://support.microsoft.com/ru-ru/office/%D0%BF%D0%B5%D1%80%D0%B5%D0%B8%D0%BC%D0%B5%D0%BD%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5-%D0%BB%D0%B8%D1%81%D1%82%D0%B0-3f1f7148-ee83-404d-8ef0-9ff99fbad1f9#:~:text=%D0%92%D0%B0%D0%B6%D0%BD%D0%BE%3A%20%D0%98%D0%BC%D0%B5%D0%BD%D0%B0%20%D0%BB%D0%B8%D1%81%D1%82%D0%BE%D0%B2%20%D0%BD%D0%B5%20%D0%BC%D0%BE%D0%B3%D1%83%D1%82,%D0%A1%D0%BE%D0%B4%D0%B5%D1%80%D0%B6%D0%B0%D1%82%D1%8C%20%D0%B1%D0%BE%D0%BB%D0%B5%D0%B5%2031%20%D0%B7%D0%BD%D0%B0%D0%BA%D0%B0.&text=%D0%9D%D0%B0%D0%BF%D1%80%D0%B8%D0%BC%D0%B5%D1%80%2C%2002%2F17%2F2016,%2D17%2D2016%20%E2%80%94%20%D0%BC%D0%BE%D0%B6%D0%BD%D0%BE)
+   
+      Examples:
+      POST /api/v1/Sheet_test/
+      {
+      "var1": {
+        "value": "value1_test",
+        "result": "value1_test"
+      },
+      "var2": {
+        "value": "value2_test",
+        "result": "value2_test"
+      }
+        }
+   POST /api/v1/Sheet_test/ with {“title:”: “Test_sheet18”}
+         {
+      "var1": {
+        "value": "value1_test",
+        "result": "value1_test"
+      },
+      "var2": {
+        "value": "value2_test",
+        "result": "value2_test"
+      }
 
 **Тесты: "GET /" or "GET /api/v1/"**
 1) test_get_sheets -- checks status code 200 while url ENDPOINT(detail in file settings.py)
@@ -47,11 +86,28 @@ _Заметки: sheet_wrong_title is wrong sheet._
 
 _Заметки: sheet_wrong_title is wrong sheet. cell_wrong_title is wrong cell of sheet._ 
 
-1) test_get_necessary_sheet_cell -- checks status code 200 while url
-    ENDPOINT(detail in file settings.py) + '<sheet_title>' + '<cell_name>'
-2) test_get_necessary_wrong_sheet_cell -- checks status code 404 while url
-    ENDPOINT(detail in file settings.py) + '<sheet_wrong_title>' + '<cell_name>'
-3) test_get_necessary_sheet_wrong_cell -- checks status code 404 while url
-    ENDPOINT(detail in file settings.py) + '<sheet_title>' + '<cell_wrong_name>'
-4) test_get_necessary_wrong_sheet_wrong_cell -- checks status code 404 while url
-    ENDPOINT(detail in file settings.py) + '<sheet_wrong_title>' + '<cell_wrong_name>'
+1) test_get_necessary_sheet_cell -- checks status code 200 while url ENDPOINT(detail in file settings.py) + '<sheet_title>' + '<cell_name>'
+2) test_get_necessary_wrong_sheet_cell -- checks status code 404 while url ENDPOINT(detail in file settings.py) + '<sheet_wrong_title>' + '<cell_name>'
+3) test_get_necessary_sheet_wrong_cell -- checks status code 404 while url  ENDPOINT(detail in file settings.py) + '<sheet_title>' + '<cell_wrong_name>'
+4) test_get_necessary_wrong_sheet_wrong_cell -- checks status code 404 while url ENDPOINT(detail in file settings.py) + '<sheet_wrong_title>' + '<cell_wrong_name>'
+
+**Тесты: "POST /api/v1/:sheet_id" with {“title”: “Test_sheep”} implements UPSERT strategy (update or insert) for both sheet_id**
+
+1) test_post_sheet -- checks change old title to a new title
+2) test_post_sheet_not_exist_title -- checks change if old title not exist
+3) test_post_sheet_not_json_title -- checks POST json not has 'title'
+4) test_post_sheet_not_json_title -- checks POST json has 'title' but it is ""
+5) test_post_sheet_wrong_len_name_32_and_more -- checks POST json has len 'title' =>32
+6) test_post_sheet_wrong_name_contains_slash -- checks POST json has 'title' and it contains '\'
+7) test_post_sheet_wrong_name_contains_colon_question_mark -- checks POST json has 'title' and it contains '?'
+8) test_post_sheet_wrong_name_contains_asterisk_sign -- checks POST json has 'title' and it contains '*'
+9) test_post_sheet_wrong_name_contains_colon_sign -- checks POST json has 'title' and it contains ':'
+10) test_post_sheet_wrong_name_contains_colon_closing_parenthesis_right -- checks POST json has 'title' and it contains '['
+11) test_post_sheet_wrong_name_contains_colon_closing_parenthesis_left -- checks POST json has 'title' and it contains ']'
+12) test_post_sheet_wrong_name_as_History checks POST json has 'title' -- and it is 'History'
+
+
+command:
+curl -X POST -H "Content-type: application/json" http://localhost:8000/api/v1/Test_sheet1/ -d '{"value": "0"}'
+
+curl http://localhost:8000/api/v1/Test_sheet/

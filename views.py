@@ -10,6 +10,10 @@ import database.requests as db_excel
 from application import app
 from application import client  # It is used to unit-tests
 from settings import ENDPOINT
+import functions.GET.sheet as get_sheet
+import functions.POST.sheet as post_sheet
+import functions.sheet as common_sheet
+from functions.cell import check_exist_sheep_cell
 
 
 @app.route(ENDPOINT, methods=['GET'])
@@ -24,39 +28,55 @@ def get_sheets():
 
 @app.route(ENDPOINT + '<sheet_title>', methods=['GET', 'POST'])
 @app.route(ENDPOINT + '<sheet_title>/', methods=['GET', 'POST'])
-def get_necessary_sheet(sheet_title):
+def necessary_sheet(sheet_title):
     """
     get_sheet does response to a request "get necessary sheet information"
     :param sheet_title: all data sheet
     :return: response to a request in the format of json
     """
+    def get_necessary_sheet(sheet_title):
+        """
+        get_necessary_sheet for GET method
+        :param sheet_title: necessary title
+        :return: response to a request
+        """
+        status_sheep = get_sheet.check_exist_sheep(sheet_title)
+        if status_sheep:
+            # Gets cells of a necessary sheet
+            cells_of_the_sheet = db_excel.get_all_cells_of_necessary_sheet(sheet_title)
+            if cells_of_the_sheet == []:
+                return {}
+            # Converts format cells of a necessary sheet to json-format
+            return common_sheet.convert_response(cells_of_the_sheet)
+        if not status_sheep:
+            abort(404)
 
-    def convert_response(cells_of_the_sheet):
+    def post_necessary_sheet(sheet_title):
         """
-         convert_response does convert format response to necessary format
-        :param cells_of_the_sheet: all data sheet
-        :return: necessary format response
+        post_necessary_sheet for POST method
+        :param sheet_title: necessary title
+        :return: response to a request
         """
-        result = dict()
-        for cell in cells_of_the_sheet:
-            result[cell["name"]] = {"value": cell["value"], "result": cell["result"]}
-        return result
-    if check_exist_sheep(sheet_title, request.method):
-        pass
-        # Gets cells of a necessary sheet
-        cells_of_the_sheet = db_excel.get_all_cells_of_necessary_sheet(sheet_title)
-        if cells_of_the_sheet == []:
-            return {}
-        # Converts format cells of a necessary sheet to json-format
-        cells_of_the_sheet = convert_response(cells_of_the_sheet)
-    if not check_exist_sheep(sheet_title, request.method):
-        abort(404)
-    return jsonify(cells_of_the_sheet)
+        new_title = request.json.get('title')
+        status_title = post_sheet.check_exist_sheep(new_title, sheet_title)
+        if status_title == 200:
+            return get_necessary_sheet(new_title)
+        else:
+            abort(status_title)
+
+
+
+    if request.method == "GET":
+        return jsonify(get_necessary_sheet(sheet_title))
+    elif request.method == "POST":
+        return jsonify(post_necessary_sheet(sheet_title))
+    else:
+        return {}
 
 
 @app.route(ENDPOINT + '<sheet_title>/' + '<cell_name>', methods=['GET', 'POST'])
 @app.route(ENDPOINT + '<sheet_title>/' + '<cell_name>/', methods=['GET', 'POST'])
-def get_necessary_sheet_cell(sheet_title, cell_name):
+def necessary_sheet_cell(sheet_title, cell_name):
     """
     get_sheet does response to a request "get necessary sheet information"
     :param sheet_title: necessary sheet.
@@ -72,7 +92,7 @@ def get_necessary_sheet_cell(sheet_title, cell_name):
         sheet_id = db_excel.get_necessary_sheet(sheet_title)[0]['id']
         cell = db_excel.get_necessary_sheet_cell(sheet_id, cell_name)[0]
     # if GET and cell of a sheet isn't exciting
-    if not check_exist_sheep_cell(sheet_title,cell_name, request.method):
+    if not check_exist_sheep_cell(sheet_title, cell_name, request.method):
         abort(404)
     if request.method == "GET":
         return jsonify(cell)
@@ -93,40 +113,7 @@ def redirect_main():
 
 # ------------------------------------------------------------------
 # additional functions
-def check_exist_sheep(sheet_title, method="GET"):
-    """
-    Check_empty_sheep checks sheep exist. If not exist then creates a new sheet.
-    """
-    # checks sheet is exist
-    check_sheet = db_excel.get_necessary_sheet(sheet_title)
-    if method == "GET":
-        if check_sheet == []:
-            return False
-        else:
-            return True
-    elif method == "POST":
-        if check_sheet == []:
-            temp_value = db_excel.insert_sheet(sheet_title)
-            return True
-        else:
-            return True
 
 
-def check_exist_sheep_cell(sheet_title, cell_name,method):
-    """
-    Check_exist_sheep_cell checks sheep cell exist. If not exist then creates a new cell.
-    """
-    # get sheet cell
-    sheet_id = db_excel.get_necessary_sheet(sheet_title)[0]['id']
-    check_cell = db_excel.get_necessary_sheet_cell(sheet_id, cell_name)
-    if method == "GET":
-        if check_cell == []:
-            return False
-        else:
-            return True
-    elif method=="POST":
-        if check_cell == []:
-            temp_value = db_excel.insert_sheet_cell(sheet_id, cell_name)
-            return True
-        else:
-            return True
+
+
