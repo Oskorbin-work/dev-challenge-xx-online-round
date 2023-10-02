@@ -119,6 +119,14 @@ _Заметки: sheet_wrong_title is wrong sheet. cell_wrong_title is wrong cel
 11) test_post_sheet_wrong_name_contains_colon_closing_parenthesis_left -- checks POST json has 'title' and it contains ']'
 12) test_post_sheet_wrong_name_as_History checks POST json has 'title' -- and it is 'History'
 
+**Тесты: "POST /api/v1/:sheet_id/:cell_id accept params {“value”: “1”} implements UPSERT strategy (update or insert) for both sheet_id and cell_id"**
+
+1) test_post_new_cell_new_value -- checks change new cell to a new title and new value 
+2) test_post_cell_wrong_name_no_english checks POST json hasn't non english letters 
+3) test_post_cell_wrong_name_as_gap -- checks POST json hasn't gas 
+4) test_insert_post_new_already_exits_cell -- checks POST json hasn't new value and new name 
+5) test_post_new_cell_without_new_value checks POST --  json hasn't new value 
+6) test_post_new_value_without_name checks -- POST json hasn't new name cell
 
 command:
 curl -X POST -H "Content-type: application/json" http://localhost:8000/api/v1/Test_sheet1/ -d '{"value": "0"}'

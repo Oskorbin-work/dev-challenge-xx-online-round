@@ -403,6 +403,9 @@ def test_post_cell_wrong_name_as_gap():
 
 
 def test_insert_post_new_already_exits_cell():
+    """
+      test_insert_post_new_already_exits_cell checks POST json hasn't new value and new name
+     """
     print("\n" + test_insert_post_new_already_exits_cell.__name__)
     data = {}
     res = client.post(ENDPOINT+"Test_sheet/var1/", json=data)
