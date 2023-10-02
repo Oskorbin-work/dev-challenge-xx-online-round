@@ -35,12 +35,16 @@ def get_necessary_sheet(sheet_title):
 
 
 @request_bd_select
-def get_necessary_sheet_cell(sheet_id, cell_name):
+def get_necessary_sheet_cell(sheet_title, cell_name):
     """
     get_necessary_sheet_cell does get necessary sheet cell information
     :return: necessary sheet cell information
     """
-    return f"select value,result from cells where sheet_id='{sheet_id}' and name='{cell_name}'  limit 1"
+    id_sheet_test = get_id_necessary_sheet(sheet_title)
+    id_sheet = int()
+    for i in id_sheet_test:
+        id_sheet=int(i[0])
+    return f"select value,result from cells where sheet_id='{id_sheet}' and name='{cell_name}'  limit 1"
 
 
 @request_bd_select_easy

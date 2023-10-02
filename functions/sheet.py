@@ -14,13 +14,12 @@ def convert_response(cells_of_the_sheet):
     return result
 
 
-def cheek_sheet(sheet_title):
+def common_check_sheet(sheet_title):
     """
-     cheek_sheet it not actual def
+     common_check_sheet it not actual def
     :param sheet_title: name title
     :return: get necessary sheet
     """
-    print(sheet_title)
     return db_excel.get_necessary_sheet(sheet_title)
 
 

@@ -11,7 +11,7 @@ def check_exist_sheep(sheet_title):
     """
 
     # checks sheet is exist
-    check_sheet = common_sheet.cheek_sheet(sheet_title)
+    check_sheet = common_sheet.common_check_sheet(sheet_title)
     if check_sheet == []:
         return False
     else:

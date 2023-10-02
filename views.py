@@ -13,7 +13,9 @@ from settings import ENDPOINT
 import functions.GET.sheet as get_sheet
 import functions.POST.sheet as post_sheet
 import functions.sheet as common_sheet
-from functions.cell import check_exist_sheep_cell
+import functions.GET.cell as get_cell
+import functions.POST.cell as post_cell
+import functions.cell as common_cell
 
 
 @app.route(ENDPOINT, methods=['GET'])
@@ -49,7 +51,7 @@ def necessary_sheet(sheet_title):
                 return {}
             # Converts format cells of a necessary sheet to json-format
             return common_sheet.convert_response(cells_of_the_sheet)
-        if not status_sheep:
+        else:
             abort(404)
 
     def post_necessary_sheet(sheet_title):
@@ -74,7 +76,7 @@ def necessary_sheet(sheet_title):
     elif request.method == "POST":
         return jsonify(post_necessary_sheet(sheet_title))
     else:
-        return {}
+        return {"Wrong request method": request.method}
 
 
 @app.route(ENDPOINT + '<sheet_title>/' + '<cell_name>', methods=['GET', 'POST'])
@@ -86,19 +88,23 @@ def necessary_sheet_cell(sheet_title, cell_name):
     :param cell_name: necessary cell
     :return: response to a request in the format of json
     """
-    check_exist_sheep(sheet_title, request.method)
-    # if GET and sheet isn't exciting
-    if not check_exist_sheep(sheet_title, request.method):
-        abort(404)
-    if check_exist_sheep_cell(sheet_title, cell_name, request.method):
-        # get sheet cell
-        sheet_id = db_excel.get_necessary_sheet(sheet_title)[0]['id']
-        cell = db_excel.get_necessary_sheet_cell(sheet_id, cell_name)[0]
-    # if GET and cell of a sheet isn't exciting
-    if not check_exist_sheep_cell(sheet_title, cell_name, request.method):
-        abort(404)
+    def check_sheet(sheet_title):
+        # sheet isn't exciting
+        if not common_sheet.check_true_false_sheet(sheet_title):
+            abort(404)
+
+    def get_necessary_cell(sheet_title, cell_name):
+        status_cell = get_cell.check_exist_sheep_cell(sheet_title, cell_name)
+        if status_cell:
+            # get sheet cell
+            cell = db_excel.get_necessary_sheet_cell(sheet_title, cell_name)[0]
+            return cell
+        else:
+            abort(404)
+
+    check_sheet(sheet_title)
     if request.method == "GET":
-        return jsonify(cell)
+        return jsonify(get_necessary_cell(sheet_title, cell_name))
     elif request.method == "POST":
         return {}
     else:
