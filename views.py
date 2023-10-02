@@ -32,7 +32,7 @@ def get_sheets():
 @app.route(ENDPOINT + '<sheet_title>/', methods=['GET', 'POST'])
 def necessary_sheet(sheet_title):
     """
-    get_sheet does response to a request "get necessary sheet information"
+    necessary_sheet does response to a request "get necessary sheet information"
     :param sheet_title: all data sheet
     :return: response to a request in the format of json
     """
@@ -42,7 +42,6 @@ def necessary_sheet(sheet_title):
         :param sheet_title: necessary title
         :return: response to a request
         """
-        print(sheet_title)
         status_sheep = get_sheet.check_exist_sheep(sheet_title)
         if status_sheep:
             # Gets cells of a necessary sheet
@@ -54,17 +53,17 @@ def necessary_sheet(sheet_title):
         else:
             abort(404)
 
-    def post_necessary_sheet(sheet_title):
+    def post_necessary_sheet(old_title):
         """
         post_necessary_sheet for POST method
         :param sheet_title: necessary title
         :return: response to a request
         """
         new_title = request.json.get('title')
-        status_title = post_sheet.check_exist_sheep(new_title, sheet_title)
+        status_title = post_sheet.check_exist_sheep(new_title, old_title)
         if status_title == 200:
             if new_title is None:
-                new_title = sheet_title
+                new_title = old_title
             return get_necessary_sheet(new_title)
         else:
             abort(status_title)
@@ -83,17 +82,27 @@ def necessary_sheet(sheet_title):
 @app.route(ENDPOINT + '<sheet_title>/' + '<cell_name>/', methods=['GET', 'POST'])
 def necessary_sheet_cell(sheet_title, cell_name):
     """
-    get_sheet does response to a request "get necessary sheet information"
+    necessary_sheet_cell does response to a request "get necessary sheet cell information"
     :param sheet_title: necessary sheet.
-    :param cell_name: necessary cell
+    :param cell_name: cell name
     :return: response to a request in the format of json
     """
     def check_sheet(sheet_title):
+        """
+         check_sheet check exist sheet
+         :param sheet_title: sheet title
+         """
         # sheet isn't exciting
         if not common_sheet.check_true_false_sheet(sheet_title):
             abort(404)
 
     def get_necessary_cell(sheet_title, cell_name):
+        """
+        get_necessary_cell for GET method
+        :param sheet_title: sheet title
+        :param cell_name: cell name
+        :return: response to a request
+        """
         status_cell = get_cell.check_exist_sheep_cell(sheet_title, cell_name)
         if status_cell:
             # get sheet cell
@@ -102,11 +111,29 @@ def necessary_sheet_cell(sheet_title, cell_name):
         else:
             abort(404)
 
+    def post_necessary_cell(sheet_title, old_cell):
+        """
+         post_necessary_cell for POST method
+         :param sheet_title: sheet title
+         :param cell_name: cell name
+         :return: response to a request
+         """
+        new_cell = request.json.get('name')
+        new_value = request.json.get('value')
+
+        status_cell = post_cell.check_exist_sheet_cell(sheet_title, new_cell, old_cell,new_value)
+        if status_cell == 201:
+            if new_cell is None:
+                new_cell = old_cell
+            return get_necessary_cell(sheet_title, new_cell)
+        else:
+            abort(status_cell)
+
     check_sheet(sheet_title)
     if request.method == "GET":
         return jsonify(get_necessary_cell(sheet_title, cell_name))
     elif request.method == "POST":
-        return {}
+        return jsonify(post_necessary_cell(sheet_title, cell_name))
     else:
         return {"Wrong request method": request.method}
 

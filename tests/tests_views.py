@@ -201,13 +201,11 @@ def test_post_sheet():
         "title": "zrada"
     }
     res = client.post(ENDPOINT+"Test_sheet/", json=data)
-
     assert res.status_code == 200, "not changes title sheet"
     data = {
         "title": "Test_sheet"
     }
     res = client.post(ENDPOINT+"zrada/", json=data)
-
     assert res.status_code == 200, "not changes title sheet"
 
 
@@ -244,7 +242,6 @@ def test_post_sheet_wrong_name_as_empty():
         "title": ""
     }
     res = client.post(ENDPOINT+"Test_sheet/", json=data)
-
     assert res.status_code == 422, "post json 'title' is empty"
 
 
@@ -257,7 +254,6 @@ def test_post_sheet_wrong_len_name_32_and_more():
         "title": "bnflmnbklfnbkfdlxbfgnmhdl;ckxmbnlfgdmgklbnfjgkldgjvmb jfglkndmcxvbnfjgidpolkvjbnfgkdlngvbfj"
     }
     res = client.post(ENDPOINT + "Test_sheet/", json=data)
-
     assert res.status_code == 422, "len title not has len =>32"
 
 
@@ -270,7 +266,6 @@ def test_post_sheet_wrong_name_contains_slash():
         "title": "/title"
     }
     res = client.post(ENDPOINT + "Test_sheet/", json=data)
-
     assert res.status_code == 422, " title not has symbols /"
 
 
@@ -283,7 +278,6 @@ def test_post_sheet_wrong_name_contains_colon_question_mark():
         "title": "?title"
     }
     res = client.post(ENDPOINT + "Test_sheet/", json=data)
-
     assert res.status_code == 422, " title not has symbols ?"
 
 
@@ -296,7 +290,6 @@ def test_post_sheet_wrong_name_contains_asterisk_sign():
         "title": "*title"
     }
     res = client.post(ENDPOINT + "Test_sheet/", json=data)
-
     assert res.status_code == 422, " title not has symbols *"
 
 
@@ -309,7 +302,6 @@ def test_post_sheet_wrong_name_contains_colon_sign():
         "title": "ti:tle"
     }
     res = client.post(ENDPOINT + "Test_sheet/", json=data)
-
     assert res.status_code == 422, " title not has symbols :"
 
 
@@ -322,7 +314,6 @@ def test_post_sheet_wrong_name_contains_colon_closing_parenthesis_right():
         "title": "[title"
     }
     res = client.post(ENDPOINT + "Test_sheet/", json=data)
-
     assert res.status_code == 422, " title not has symbols ["
 
 
@@ -335,7 +326,6 @@ def test_post_sheet_wrong_name_contains_colon_closing_parenthesis_left():
         "title": "tit]le"
     }
     res = client.post(ENDPOINT + "Test_sheet/", json=data)
-
     assert res.status_code == 422, " title not has symbol ]"
 
 
@@ -348,9 +338,108 @@ def test_post_sheet_wrong_name_as_History():
         "title": "History"
     }
     res = client.post(ENDPOINT + "Test_sheet/", json=data)
-
     assert res.status_code == 422, " title not has name as 'History'"
 
+# ------------------------------------------------
+# test def post_necessary_cell
 
 
+def test_post_new_cell_new_value():
+    """
+      test_post_new_cell_new_value checks change new cell to a new title and new value
+     """
+    print("\n" + test_post_new_cell_new_value.__name__)
+    data = {
+        "name": "zrada",
+        "value": "test_value"
+    }
+    res = client.post(ENDPOINT+"Test_sheet/var1/", json=data)
 
+    assert res.status_code == 200, "not changes name cell with a new value"
+    data = {
+        "name": "var1",
+        "value": ""
+    }
+    res = client.post(ENDPOINT+"Test_sheet/zrada/", json=data)
+    assert res.status_code == 200, "not changes name cell with a new value"
+
+
+def test_post_cell_wrong_name_no_english():
+    """
+      test_post_cell_wrong_name_no_english checks POST json hasn't non english letters
+     """
+    print("\n" + test_post_cell_wrong_name_no_english.__name__)
+    data = {
+        "name": "ФБФ",
+        "value": "test_value"
+    }
+    res = client.post(ENDPOINT+"Test_sheet/var1/", json=data)
+    assert res.status_code == 422, "not changes name cell with a new value"
+
+
+def test_post_cell_wrong_name_as_gap():
+    """
+      test_post_cell_wrong_name_as_gap checks POST json hasn't gas
+     """
+    print("\n" + test_post_new_cell_new_value.__name__)
+    data = {
+        "name": "Test Test",
+        "value": "test_value"
+    }
+    res = client.post(ENDPOINT+"Test_sheet/var1/", json=data)
+    assert res.status_code == 422, "add wrong name cell (gap inside)"
+    data = {
+        "name": "Test_Test ",
+        "value": "test_value"
+    }
+    res = client.post(ENDPOINT+"Test_sheet/var1/", json=data)
+    assert res.status_code == 422, "add wrong name cell (gap left)"
+    data = {
+        "name": " Test_Test",
+        "value": "test_value"
+    }
+    res = client.post(ENDPOINT+"Test_sheet/var1/", json=data)
+    assert res.status_code == 422, "add wrong name cell (right)"
+
+
+def test_insert_post_new_already_exits_cell():
+    print("\n" + test_insert_post_new_already_exits_cell.__name__)
+    data = {}
+    res = client.post(ENDPOINT+"Test_sheet/var1/", json=data)
+    assert res.status_code == 409, "add the new cell name has already been created until request"
+
+
+def test_post_new_cell_without_new_value():
+    """
+      test_post_new_cell_without_new_value checks POST json hasn't new value
+     """
+    print("\n" + test_post_new_cell_without_new_value.__name__)
+    data = {
+        "name": "zrada"
+    }
+    res = client.post(ENDPOINT+"Test_sheet/var1/", json=data)
+    assert res.status_code == 200, "wrong without new value"
+    data = {
+        "name": "var1"
+    }
+    res = client.post(ENDPOINT+"Test_sheet/zrada/", json=data)
+    assert res.status_code == 200, "wrong without new value"
+
+
+def test_post_new_value_without_name():
+    """
+      test_post_new_value_without_name checks POST json hasn't new name cell
+     """
+    print("\n" + test_post_new_value_without_name.__name__)
+    data = {
+        "value": "zrada"
+    }
+    res = client.post(ENDPOINT+"Test_sheet/var1/", json=data)
+
+    assert res.status_code == 200, "wrong without name"
+    data = {
+        "value": ""
+    }
+    res = client.post(ENDPOINT+"Test_sheet/var1/", json=data)
+
+    assert res.status_code == 200, "wrong without name"

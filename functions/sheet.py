@@ -24,6 +24,11 @@ def common_check_sheet(sheet_title):
 
 
 def check_true_false_sheet(sheet_title):
+    """
+    check_true_false_sheet (request.method is POST ) checks exist sheet or not exist
+    :param sheet_title: sheet title
+    :return: True is exist, False isn't exist
+    """
     status_title = db_excel.get_check_exist_sheet(sheet_title)[0][0]
     if status_title == 1:
         return True

@@ -36,7 +36,7 @@
            GET /api/v1/devchallenge-xx/var3 
            Response: {“value”: “=var1+var2”, result: “3”}
    
-   4) POST /api/v1/:sheet_id/ or POST /api/v1:sheet_id/ accept params {“value”: “1”} implements UPSERT strategy (update or insert) for both sheet_id
+   4)  POST /api/v1/:sheet_id/ accept params {“title”: “1”} implements UPSERT strategy (update or insert) for both sheet_id
       1) 201 if the title sheet is OK
       2) 422 if the title sheet is not OK e.g. new title sheet is not suitable (read https://support.microsoft.com/ru-ru/office/%D0%BF%D0%B5%D1%80%D0%B5%D0%B8%D0%BC%D0%B5%D0%BD%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5-%D0%BB%D0%B8%D1%81%D1%82%D0%B0-3f1f7148-ee83-404d-8ef0-9ff99fbad1f9#:~:text=%D0%92%D0%B0%D0%B6%D0%BD%D0%BE%3A%20%D0%98%D0%BC%D0%B5%D0%BD%D0%B0%20%D0%BB%D0%B8%D1%81%D1%82%D0%BE%D0%B2%20%D0%BD%D0%B5%20%D0%BC%D0%BE%D0%B3%D1%83%D1%82,%D0%A1%D0%BE%D0%B4%D0%B5%D1%80%D0%B6%D0%B0%D1%82%D1%8C%20%D0%B1%D0%BE%D0%BB%D0%B5%D0%B5%2031%20%D0%B7%D0%BD%D0%B0%D0%BA%D0%B0.&text=%D0%9D%D0%B0%D0%BF%D1%80%D0%B8%D0%BC%D0%B5%D1%80%2C%2002%2F17%2F2016,%2D17%2D2016%20%E2%80%94%20%D0%BC%D0%BE%D0%B6%D0%BD%D0%BE)
       3) Добавить лист: curl -X POST -H "Content-type: application/json" http://localhost:8000/api/v1/Test_sheet9544/ -d '{}'  
@@ -64,6 +64,17 @@
         "value": "value2_test",
         "result": "value2_test"
       }
+
+   4)  POST /api/v1/:sheet_id/:cell_id accept params {"name": "cell_name", "value": "1"} implements UPSERT strategy (update or insert) for both sheet_id
+      1) 201 if the cell name and cell value is OK
+      2) 422 if the cell name or cell value is not OK e.g. new cell name or cell value is not suitable (read https://support.microsoft.com/en-gb/office/use-a-screen-reader-to-name-a-cell-or-data-range-in-excel-e8b55e7a-2cfd-40c4-9ea9-e738aa24e32c
+)
+   3) 409 if the new cell name has already been created until request
+      3) Добавить новую ячейку: curl -X POST -H "Content-type: application/json" http://localhost:8000/api/v1/Test_sheet/var1 -d '{}
+   4) Изменить название ячейки без value: curl -X POST -H "Content-type: application/json" http://localhost:8000/api/v1/Test_sheet/var1 -d '{"name":"name_new"} 
+   5) Изменить название ячейки с value: curl -X POST -H "Content-type: application/json" http://localhost:8000/api/v1/Test_sheet/var1 -d '{"name":"name_new", "value":"value_new"} 
+   6) Изменить value : curl -X POST -H "Content-type: application/json" http://localhost:8000/api/v1/Test_sheet/var1 -d '{"value":"value_new"}
+
 
 **Тесты: "GET /" or "GET /api/v1/"**
 1) test_get_sheets -- checks status code 200 while url ENDPOINT(detail in file settings.py)
@@ -115,3 +126,5 @@ curl -X POST -H "Content-type: application/json" http://localhost:8000/api/v1/Te
 curl http://localhost:8000/api/v1/Test_sheet/
 
 pytest tests_views.py -s
+
+ curl -X POST -H "Content-type: application/json" http://localhost:8000/api/v1/Test_sheet/var1 -d '{"name": "zrada", "value":""}'

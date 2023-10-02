@@ -2,22 +2,14 @@
 import database.requests as db_excel
 
 
-def check_exist_sheep_cell(sheet_title, cell_name, method):
+def check_true_false_cell(sheet_title, cell_name):
     """
-    check_exist_sheep_cell checks sheep cell exist. If not exist, then create a new cell.
+    check_true_false_cell (request.method is POST ) checks exist sheet cell or not exist
+    :param sheet_title: sheet title,cell_name: cell name
+    :return: True is exist, False isn't exist
     """
-    # get sheet cell
-    check_cell = db_excel.get_necessary_sheet_cell(sheet_title, cell_name)
-    if method == "GET":
-        if check_cell == []:
-            return False
-        else:
-            return True
-    elif method == "POST":
-        if check_cell == []:
-            temp_value = db_excel.insert_sheet_cell(sheet_title, cell_name)
-            return True
-        else:
-            return True
-
-
+    status_title = db_excel.get_check_exist_cell(sheet_title,cell_name)[0][0]
+    if status_title == 1:
+        return True
+    else:
+        return False
