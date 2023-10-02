@@ -20,6 +20,7 @@ def cheek_sheet(sheet_title):
     :param sheet_title: name title
     :return: get necessary sheet
     """
+    print(sheet_title)
     return db_excel.get_necessary_sheet(sheet_title)
 
 

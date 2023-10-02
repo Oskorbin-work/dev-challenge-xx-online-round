@@ -40,6 +40,7 @@ def necessary_sheet(sheet_title):
         :param sheet_title: necessary title
         :return: response to a request
         """
+        print(sheet_title)
         status_sheep = get_sheet.check_exist_sheep(sheet_title)
         if status_sheep:
             # Gets cells of a necessary sheet
@@ -60,6 +61,8 @@ def necessary_sheet(sheet_title):
         new_title = request.json.get('title')
         status_title = post_sheet.check_exist_sheep(new_title, sheet_title)
         if status_title == 200:
+            if new_title is None:
+                new_title = sheet_title
             return get_necessary_sheet(new_title)
         else:
             abort(status_title)

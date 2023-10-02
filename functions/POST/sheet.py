@@ -26,7 +26,8 @@ def check_exist_sheep(new_title, old_title):
         return status_title
     else:
         # insert
-        return insert_new_title_sheet(old_title)
+        temp_value = insert_new_title_sheet(old_title)
+        return status_title
 
 
 def insert_new_title_sheet(new_title):
