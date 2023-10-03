@@ -28,4 +28,3 @@ def close_connection(exception):
 
     if db is not None:
         db.cursor().close()
-

@@ -1,6 +1,7 @@
+""" This code executes:
+    a) tests
+"""
 # Import project Modules
-import json
-
 from views import client
 from settings import ENDPOINT
 
@@ -157,20 +158,6 @@ def test_get_necessary_wrong_sheet_cell():
     # Checks that def work is ok
     assert res.status_code == 404, "sheet is creating"
     print("–   " + ENDPOINT + "+'<sheet_wrong_title>' + '<sheet_title>' has status code - 404")
-
-
-def test_get_necessary_sheet_wrong_cell():
-    """
-    test_get_necessary_sheet checks status code 404 while url
-    ENDPOINT(detail in file settings.py) + '<sheet_title>' + '<cell_wrong_name>'
-    """
-    print("\n" + test_get_necessary_sheet_wrong_cell.__name__)
-    sheet_name = "Test_sheet/"
-    cell_name = "wrong_var1/"
-    res = client.get(ENDPOINT + sheet_name + cell_name, method=['GET'])
-    # Checks that def work is ok
-    assert res.status_code == 404, "wrong is creating"
-    print("–   " + ENDPOINT + "+'<sheet_title>' + '<sheet_wrong_title>' has status code - 404")
 
 
 def test_get_necessary_wrong_sheet_wrong_cell():
@@ -381,7 +368,7 @@ def test_post_cell_wrong_name_as_gap():
     """
       test_post_cell_wrong_name_as_gap checks POST json hasn't gas
      """
-    print("\n" + test_post_new_cell_new_value.__name__)
+    print("\n" + test_post_cell_wrong_name_as_gap.__name__)
     data = {
         "name": "Test Test",
         "value": "test_value"
@@ -446,3 +433,95 @@ def test_post_new_value_without_name():
     res = client.post(ENDPOINT+"Test_sheet/var1/", json=data)
 
     assert res.status_code == 200, "wrong without name"
+
+# ------------------------------------------------
+# test formula
+
+def test_post_new_value_with_simply_formula():
+    """
+      test_post_new_value_with_simply_formula checks formula "=1"
+     """
+    print("\n" + test_post_new_value_with_simply_formula.__name__)
+    data = {
+        "value": "=1"
+    }
+    res = client.post(ENDPOINT+"Test_sheet/var1/", json=data)
+
+    assert res.status_code == 200, "wrong without formula"
+
+
+def test_post_new_value_with_hard_formula():
+    """
+      test_post_new_value_with_hard_formula checks formula "=((var2-(var3+var2))*var2)*(var3+var2)"
+     """
+    print("\n" + test_post_new_value_with_hard_formula.__name__)
+    data = {
+        "value": "=((var2-(var3+var2))*var2)*(var3+var2)"
+    }
+    res = client.post(ENDPOINT+"Test_sheet/var1/", json=data)
+    assert res.status_code == 200, "wrong formula"
+
+
+def test_post_new_value_without_formula():
+    """
+      test_post_new_value_without_formula checks value 1
+     """
+    print("\n" + test_post_new_value_without_name.__name__)
+    data = {
+        "value": "1"
+    }
+    res = client.post(ENDPOINT+"Test_sheet/var1/", json=data)
+
+    assert res.status_code == 200, "wrong without formula"
+
+
+def test_post_value_self_name():
+    """
+      test_post_value_self_name checks formula "=var1"
+     """
+    print("\n" + test_post_value_self_name.__name__)
+    data = {
+        "value": "=var1"
+    }
+    res = client.post(ENDPOINT+"Test_sheet/var1/", json=data)
+
+    assert res.status_code == 422, "self name can not in the formula"
+
+
+def test_post_value_wrong_name():
+    """
+      test_post_value_wrong_name checks formula  "=var1"
+     """
+    print("\n" + test_post_value_wrong_name.__name__)
+    data = {
+        "value": "=var1"
+    }
+    res = client.post(ENDPOINT+"Test_sheet/var1/", json=data)
+
+    assert res.status_code == 422, "self name can not in the formula"
+
+
+def test_post_value_wrong_symbols():
+    """
+      test_post_value_wrong_symbols checks formula "=var1+&%"
+     """
+    print("\n" + test_post_value_wrong_name.__name__)
+    data = {
+        "value": "=var1+&%"
+    }
+    res = client.post(ENDPOINT+"Test_sheet/var1/", json=data)
+
+    assert res.status_code == 422, "wrong symbols can not in the formula"
+
+
+def test_post_value_two_more_equal_sign():
+    """
+      test_post_value_two_more_equal_sign checks formula "=var1+=var"
+     """
+    print("\n" + test_post_value_two_more_equal_sign.__name__)
+    data = {
+        "value": "=var1+=var"
+    }
+    res = client.post(ENDPOINT+"Test_sheet/var1/", json=data)
+
+    assert res.status_code == 422, "two_more_equal_sign can not in the formula"

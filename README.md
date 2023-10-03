@@ -1,3 +1,7 @@
+ЗАМЕТКА:
+1) К сожалению, я допустил ошибку с тем, что при вычисление result нужно было идти от известных переменных (где в формуле нет ссылки на другие переменных) до менее известных. Тоесть, если var1= 1, var2 = var1+1, var3=var1+var2, то при вычисление var3  нужно было сначала записать result var1 потом result var2 и только потом result var3. К сожалению, времени исправить уже нет. Если это критично, то ладно, спасибо за хорошее задание, я много чего нового выучил)
+2) 
+
 **Description of input data:**
 1) "GET /" or "GET /api/v1/"
    1) 200 if sheets are present
@@ -128,6 +132,15 @@ _Заметки: sheet_wrong_title is wrong sheet. cell_wrong_title is wrong cel
 5) test_post_new_cell_without_new_value checks POST --  json hasn't new value 
 6) test_post_new_value_without_name checks -- POST json hasn't new name cell
 
+** Тесты формул **
+1) test_post_new_value_with_simply_formula -- checks formula "=1"
+2) test_post_new_value_with_hard_formula -- checks formula "=((var2-(var3+var2))*var2)*(var3+var2)"
+3) test_post_new_value_without_formula -- checks value 1
+4) test_post_value_self_name -- checks formula "=var1"
+5) test_post_value_wrong_name -- checks formula  "=var1"
+6) test_post_value_wrong_symbols -- checks formula "=var1+&%"
+7) test_post_value_two_more_equal_sign -- checks formula "=var1+=var"
+
 command:
 curl -X POST -H "Content-type: application/json" http://localhost:8000/api/v1/Test_sheet1/ -d '{"value": "0"}'
 
@@ -136,3 +149,6 @@ curl http://localhost:8000/api/v1/Test_sheet/
 pytest tests_views.py -s
 
  curl -X POST -H "Content-type: application/json" http://localhost:8000/api/v1/Test_sheet/var1 -d '{"name": "zrada", "value":""}'
+
+ curl -X POST -H "Content-type: a
+pplication/json" http://localhost:8000/api/v1/Test_sheet/var1 -d '{ "value":"=((var2-(var3+var2))*var2)*(var3+var2)"}'

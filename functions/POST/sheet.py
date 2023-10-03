@@ -1,3 +1,8 @@
+""" This code executes:
+    a) checks to exist or not exist sheet
+    b) update sheet
+    c) insert sheet
+"""
 # Import python Modules
 import re
 # Import project Modules
@@ -9,7 +14,8 @@ def check_exist_sheep(new_title, old_title):
     """
     check_exist_sheep (request.method is POST ) checks sheep exist. If not exist, then create a new sheet or update
     (If have POSt json title).
-    :param new_title: new title (from POST json 'title'), old_title: necessary title
+    :param new_title: new title (from POST json 'title')
+    :param old_title: necessary title
     :return: status title. 422 -- if has wrong title, 200 is ok. 404 -- if has wrong olt title and has new_title.
     """
     status_title = 200
@@ -45,7 +51,8 @@ def insert_new_title_sheet(new_title):
 def update_old_title_sheet(new_title, old_title):
     """
     update_new_title_sheet (request.method is POST ) update old title
-    :param new_title: new title (from POST json 'title'), old_title: necessary title
+    :param new_title: new title (from POST json 'title')
+    :param old_title: necessary title
     :return: status title. 422 -- if has wrong title, 200 is ok. 404 -- if has wrong olt title and has new_title.
     """
     status_title = check_name_title(new_title)

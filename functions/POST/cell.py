@@ -1,14 +1,23 @@
+""" This code executes:
+    a) checks to exist or not exist sheet cell
+    b) update result cell
+    c) insert cell
+"""
 # Import python Modules
 import re
 # Import project Modules
 import database.requests as db_excel
 import functions.cell as common_sheet
+import functions.POST.formulas.formulas as formula
 
 
 def check_exist_sheet_cell(sheet_title, new_cell, old_cell, new_value):
     """
     check_exist_sheet_cell (request.method is POST) checks whether there is an old cell, new value or not. Then, using if, it decides what will happen next.
-    :param sheet_title: it current sheet. new_cell: new name cell, old_cell: current cell, new_value: new value cell
+    :param sheet_title: it current sheet.
+    :param new_cell: new name cell
+    :param old_cell: current cell
+    :param new_value: new value cell
     :return: status code. 422 -- if has wrong cell (old or new) or value, 201 is ok.
     """
     status_name = 201
@@ -33,7 +42,10 @@ def check_exist_sheet_cell(sheet_title, new_cell, old_cell, new_value):
 def new_cell_new_value(sheet_title, new_cell, old_cell, new_value):
     """
     new_cell_new_value (request.method is POST) update new name cell and value
-    :param sheet_title: it current sheet. new_cell: new name cell, old_cell: current cell, new_value: new value cell
+    :param sheet_title: it current sheet
+    :param new_cell: new name cell
+    :param old_cell: current cell
+    :param new_value: new value cell
     :return: status code. 422 -- if has wrong cell (old or new) or value, 201 is ok.
     """
     # text error check cells
@@ -52,7 +64,8 @@ def new_cell_new_value(sheet_title, new_cell, old_cell, new_value):
 def new_cell_without_parameters(sheet_title, new_cell):
     """
     new_cell_without_parameters (request.method is POST) insert new cell
-    :param sheet_title: it current sheet.new_cell: new name cell
+    :param sheet_title: it current sheet.
+    :param new_cell: new name cell
     :return: status code. 409 -- the new cell name has already been created until request, 201 is ok.
     """
     # text error check cells
@@ -68,7 +81,8 @@ def new_cell_without_parameters(sheet_title, new_cell):
 def new_cell_without_new_value(sheet_title, new_cell, old_cell):
     """
     new_cell_without_new_value (request.method is POST) update name cell
-    :param sheet_title: it current sheet.new_cell: new name cell
+    :param sheet_title: it current sheet.
+    :param new_cell: new name cell
     :return: status code. 409 -- the new cell name has already been created until request, 201 is ok.
     """
     # text error check cells
@@ -87,7 +101,9 @@ def new_cell_without_new_value(sheet_title, new_cell, old_cell):
 def old_cell_new_value(sheet_title, old_cell, new_value):
     """
     old_cell_new_value (request.method is POST) update old name cell and value
-    :param sheet_title: it current sheet. old_cell: current cell, new_value: new value cell
+    :param sheet_title: it current sheet.
+    :param old_cell: current cell
+    :param new_value: new value cell
     :return: status code. 422 -- if has wrong cell (old or new) or value, 201 is ok.
     """
     # text error check cells
@@ -96,7 +112,9 @@ def old_cell_new_value(sheet_title, old_cell, new_value):
         return 422
     if exist_old_cell:
         # update
-        status_name = db_excel.update_old_cell(sheet_title, "None", old_cell, new_value)
+        new_result = get_new_result(new_value, old_cell, sheet_title)
+
+        status_name = db_excel.update_old_cell(sheet_title, "None", old_cell, new_result,new_value)
         return status_name
     return 201
 
@@ -104,12 +122,16 @@ def old_cell_new_value(sheet_title, old_cell, new_value):
 def update_old_sheet_cell(sheet_title, new_cell, old_cell, new_value=""):
     """
     update_old_sheet_cell (request.method is POST) update old name cell.
-    :param sheet_title: it current sheet. old_cell: current cell, new_value: new value cell
+    :param sheet_title: it current sheet.
+    :param old_cell: current cell
+    :param new_value: new value cell
     :return: status code. 422 -- if has wrong cell (old or new), 201 is ok.
     """
     status_name = check_name_cell(new_cell)
     if status_name == 201:
-        temp_value = db_excel.update_new_cell(sheet_title, new_cell, old_cell, new_value)
+        new_result = get_new_result(new_value,new_cell, sheet_title)
+
+        temp_value = db_excel.update_new_cell(sheet_title, new_cell, old_cell, new_result, new_value)
     return status_name
 
 
@@ -126,3 +148,14 @@ def check_name_cell(cell):
         return 422
     else:
         return 201
+
+
+def get_new_result(value, name_cell, sheet_title):
+    """
+    get_new_result get result cell
+    :param value: value cell
+    :param name_cell: current cell
+    :param sheet_title: current sheet.
+    :return: new result
+    """
+    return formula.get_value_formula(value,name_cell, sheet_title)

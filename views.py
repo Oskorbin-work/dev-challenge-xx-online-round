@@ -49,7 +49,7 @@ def necessary_sheet(sheet_title):
             if cells_of_the_sheet == []:
                 return {}
             # Converts format cells of a necessary sheet to json-format
-            return common_sheet.convert_response(cells_of_the_sheet)
+            return common_sheet.convert_response(cells_of_the_sheet,sheet_title)
         else:
             abort(404)
 
@@ -145,10 +145,6 @@ def redirect_main():
     :return: path to URL "api/v1/"
     """
     return redirect(url_for("get_sheets"))
-
-
-# ------------------------------------------------------------------
-# additional functions
 
 
 
