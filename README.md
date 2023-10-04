@@ -1,9 +1,10 @@
 # List Of Contents
 <!-- TOC -->
+* [List Of Contents](#list-of-contents)
 * [Start Project](#start-project)
   * [Run tests](#run-tests)
   * [Note to projects (It is important):](#note-to-projects-it-is-important)
-  * [**Description of input data:**](#description-of-input-data)
+  * [Description of input data](#description-of-input-data)
   * [Test cases:](#test-cases)
     * ["GET /" or "GET /api/v1/"](#get--or-get-apiv1)
     * ["GET /api/v1/:sheet_id" or "GET /api/v1/:sheet_id/"](#get-apiv1sheetid-or-get-apiv1sheetid)
@@ -33,7 +34,7 @@ Unfortunately, I made a **_mistake_**. I don't have time to solve it. I’ll des
   - We have cells: var1= 1, var2 = var1+1, var3=var1+var2
   - When project is  calculating var3, It is must give result var1, after result var2 и only then give result var3. 
 
-## **Description of input data:**
+## Description of input data
 1) "GET /" or "GET /api/v1/"
    1) 200 if sheets are present
    2) 404 if sheets aren't created
