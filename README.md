@@ -1,3 +1,11 @@
+<!-- TOC -->
+* [Start Project](#start-project)
+  * [Run tests](#run-tests)
+  * [Note to projects (It is important):](#note-to-projects-it-is-important)
+    * [**Description of input data:**](#description-of-input-data)
+    * [Test cases:](#test-cases)
+<!-- TOC -->
+
 # Start Project
 1. Go to the folder '**docker**' (as project root) which contains file docker-compose.py and folder Backend (contains project files);
 2. You can type command "**docker-compose up**" or "**sudo docker-compose up**" into command line;
@@ -18,7 +26,7 @@ Unfortunately, I made a **_mistake_**. I don't have time to solve it. I’ll des
   - We have cells: var1= 1, var2 = var1+1, var3=var1+var2
   - When project is  calculating var3, It is must give result var1, after result var2 и only then give result var3. 
 
-### **Description of input data:**
+## **Description of input data:**
 1) "GET /" or "GET /api/v1/"
    1) 200 if sheets are present
    2) 404 if sheets aren't created
@@ -153,9 +161,9 @@ Unfortunately, I made a **_mistake_**. I don't have time to solve it. I’ll des
    }
    ```
 
-### Test cases:
+## Test cases:
 
-**"GET /" or "GET /api/v1/"**
+### "GET /" or "GET /api/v1/"
 1) test_get_sheets -- checks status code 200 while url ENDPOINT(detail in file settings.py)
 2) test_get_sheets_check_key_sheets -- checks key Sheets in Sheets exist
 3) test_get_sheets_check_key_value_sheets -- checks key Sheets in Sheets is list
@@ -166,20 +174,20 @@ Unfortunately, I made a **_mistake_**. I don't have time to solve it. I’ll des
 8) test_get_sheets_id_type_data -- checks every id sheet is integer.
 9) test_get_sheets_title_type_data -- checks every title sheet is integer.
 
-**"GET /api/v1/:sheet_id" or "GET /api/v1/:sheet_id/"**
+### "GET /api/v1/:sheet_id" or "GET /api/v1/:sheet_id/"
 
 1) test_get_sheets -- checks status code 200 while url ENDPOINT(detail in file settings.py) + '<sheet_title>'
 2) test_get_necessary_wrong_sheet -- checks status code 404 while url ENDPOINT(detail in file settings.py)
 + '<sheet_wrong_title>' 
 
-**"GET /api/v1/:sheet_id/:cell_id" or "/api/v1/:sheet_id/:cell_id/"**
+### "GET /api/v1/:sheet_id/:cell_id" or "/api/v1/:sheet_id/:cell_id/"
 
 1) test_get_necessary_sheet_cell -- checks status code 200 while url ENDPOINT(detail in file settings.py) + '<sheet_title>' + '<cell_name>'
 2) test_get_necessary_wrong_sheet_cell -- checks status code 404 while url ENDPOINT(detail in file settings.py) + '<sheet_wrong_title>' + '<cell_name>'
 3) test_get_necessary_sheet_wrong_cell -- checks status code 404 while url  ENDPOINT(detail in file settings.py) + '<sheet_title>' + '<cell_wrong_name>'
 4) test_get_necessary_wrong_sheet_wrong_cell -- checks status code 404 while url ENDPOINT(detail in file settings.py) + '<sheet_wrong_title>' + '<cell_wrong_name>'
 
-**"POST /api/v1/:sheet_id" with {“title”: “Test_sheep”} implements UPSERT strategy (update or insert) for both sheet_id**
+### "POST /api/v1/:sheet_id" with {“title”: “Test_sheep”} implements UPSERT strategy (update or insert) for both sheet_id
 
 1) test_post_sheet -- checks change old title to a new title
 2) test_post_sheet_not_exist_title -- checks change if old title not exist
@@ -194,7 +202,7 @@ Unfortunately, I made a **_mistake_**. I don't have time to solve it. I’ll des
 11) test_post_sheet_wrong_name_contains_colon_closing_parenthesis_left -- checks POST json has 'title' and it contains ']'
 12) test_post_sheet_wrong_name_as_History checks POST json has 'title' -- and it is 'History'
 
-**"POST /api/v1/:sheet_id/:cell_id accept params {“value”: “1”} implements UPSERT strategy (update or insert) for both sheet_id and cell_id"**
+### "POST /api/v1/:sheet_id/:cell_id accept params {“value”: “1”} implements UPSERT strategy (update or insert) for both sheet_id and cell_id"
 
 1) test_post_new_cell_new_value -- checks change new cell to a new title and new value 
 2) test_post_cell_wrong_name_no_english checks POST json hasn't non english letters 
@@ -203,7 +211,7 @@ Unfortunately, I made a **_mistake_**. I don't have time to solve it. I’ll des
 5) test_post_new_cell_without_new_value checks POST --  json hasn't new value 
 6) test_post_new_value_without_name checks -- POST json hasn't new name cell
 
-**"Test of formula"
+### "Test of formula"
 
 1) test_post_new_value_with_simply_formula -- checks formula "=1"
 2) test_post_new_value_with_hard_formula -- checks formula "=((var2-(var3+var2))*var2)*(var3+var2)"
