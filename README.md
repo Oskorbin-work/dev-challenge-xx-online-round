@@ -1,53 +1,79 @@
-ЗАМЕТКА:
-1) К сожалению, я допустил ошибку с тем, что при вычисление result нужно было идти от известных переменных (где в формуле нет ссылки на другие переменных) до менее известных. Тоесть, если var1= 1, var2 = var1+1, var3=var1+var2, то при вычисление var3  нужно было сначала записать result var1 потом result var2 и только потом result var3. К сожалению, времени исправить уже нет. Если это критично, то ладно, спасибо за хорошее задание, я много чего нового выучил)
-2) 
+# Start Project
+1. Go to the folder '**docker**' (as project root) which contains file docker-compose.py and folder Backend (contains project files);
+2. You can type command "**docker-compose up**" or "**sudo docker-compose up**" into command line;
+3. Open URl http://localhost:8080/api/v1/. You must see a list of sheets.
+> If you open URl but you see error (maybe 'This site can’t be reached'), then you can open URL http://127.0.0.1:8080 .
 
-**Description of input data:**
+## Run tests
+You have two choices how you can run tests:
+1) You can open URL http://localhost:8080/api/v1/tests/
+2)  You can type command "pytest Backend/tests/tests_views.py -s"
+
+> Databases have the sheet "Test_sheet" and it the cell "var1". This is necessary to run tests. So it is better to not delete this sheet and cell.
+
+## Note to projects (It is important):
+Unfortunately, I made a **_mistake_**. I don't have time to solve it. I’ll describe how it should be:
+- When project is calculating result of cell, It has to go to from known cells (Where value not contain other name of cell) to unknown cell.
+- Example:
+  - We have cells: var1= 1, var2 = var1+1, var3=var1+var2
+  - When project is  calculating var3, It is must give result var1, after result var2 и only then give result var3. 
+
+### **Description of input data:**
 1) "GET /" or "GET /api/v1/"
    1) 200 if sheets are present
    2) 404 if sheets aren't created
-   <br/>
+
    Example:
       * GET /api/v1/
-        <br/>
-        Response: {"Sheets":[{"id":1,"title":"Sheet1"},{"id":2,"title":"Sheet2"}]
+
+    Response: 
+   ```
+    {"Sheets":[{"id":1,"title":"Sheet1"},{"id":2,"title":"Sheet2"}]
+   ```
+   
 2) GET /api/v1/:sheet_id or GET /api/v1/:sheet_id/ 
     1) 200 if the sheet is present
     2) 404 if the sheet is missing
-          <br/>
-       Example:
 
-       {
-      "var1": {
-        "value": "value1_test",
-        "result": "value1_test"
-      },
-      "var2": {
-        "value": "value2_test",
-        "result": "value2_test"
-      }
-        }
+   Example:
+      * GET /api/v1/Sheet_Test
+       Response:
+   ```
+    {
+   "var1":{
+      "value":"=1+2",
+      "result":"3"
+   },
+   "var2":{
+      "value":"=var1+1",
+      "result":"4"
+   }
+    }
+   ```
 3) GET /api/v1/:sheet_id/:cell_id or GET /api/v1/:sheet_id/:cell_id/ 
    1) 200 if the value present
    2) 404 if the value is missing
-          <br/>
+   
+   Examples:
 
-          Examples:
-           GET /api/v1/devchallenge-xx/var1 
-           Response: {“value”: “1”, result: “1”} 
-           GET /api/v1/devchallenge-xx/var1 
-           Response: {“value”: “2”, result: “2”} 
-           GET /api/v1/devchallenge-xx/var3 
-           Response: {“value”: “=var1+var2”, result: “3”}
+        GET /api/v1/devchallenge-xx/var1 
+        Response: {“value”: “1”, result: “1”} 
+        GET /api/v1/devchallenge-xx/var1 
+        Response: {“value”: “2”, result: “2”} 
+        GET /api/v1/devchallenge-xx/var3 
+        Response: {“value”: “=var1+var2”, result: “3”}      
    
    4)  POST /api/v1/:sheet_id/ accept params {“title”: “1”} implements UPSERT strategy (update or insert) for both sheet_id
       1) 201 if the title sheet is OK
-      2) 422 if the title sheet is not OK e.g. new title sheet is not suitable (read https://support.microsoft.com/ru-ru/office/%D0%BF%D0%B5%D1%80%D0%B5%D0%B8%D0%BC%D0%B5%D0%BD%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5-%D0%BB%D0%B8%D1%81%D1%82%D0%B0-3f1f7148-ee83-404d-8ef0-9ff99fbad1f9#:~:text=%D0%92%D0%B0%D0%B6%D0%BD%D0%BE%3A%20%D0%98%D0%BC%D0%B5%D0%BD%D0%B0%20%D0%BB%D0%B8%D1%81%D1%82%D0%BE%D0%B2%20%D0%BD%D0%B5%20%D0%BC%D0%BE%D0%B3%D1%83%D1%82,%D0%A1%D0%BE%D0%B4%D0%B5%D1%80%D0%B6%D0%B0%D1%82%D1%8C%20%D0%B1%D0%BE%D0%BB%D0%B5%D0%B5%2031%20%D0%B7%D0%BD%D0%B0%D0%BA%D0%B0.&text=%D0%9D%D0%B0%D0%BF%D1%80%D0%B8%D0%BC%D0%B5%D1%80%2C%2002%2F17%2F2016,%2D17%2D2016%20%E2%80%94%20%D0%BC%D0%BE%D0%B6%D0%BD%D0%BE)
+      2) 422 if the title sheet is not OK e.g. new title sheet is not suitable (read https://support.microsoft.com/en-us/office/rename-a-worksheet-3f1f7148-ee83-404d-8ef0-9ff99fbad1f9)
       3) Добавить лист: curl -X POST -H "Content-type: application/json" http://localhost:8000/api/v1/Test_sheet9544/ -d '{}'  
       4) Изменить название листу: curl -X POST -H "Content-type: application/json" http://localhost:8000/api/v1/Test_sheet/ -d '{"title": "Test_sheet_2"}'
-
-      Examples:
-      POST /api/v1/Sheet_test/
+      5) insert new sheet: 
+    ```console
+    curl -X POST -H "Content-type: application/json" http://localhost:8000/api/v1/Test_sheet -d '{}
+    ```
+      ```
+   
       {
       "var1": {
         "value": "value1_test",
@@ -58,7 +84,13 @@
         "result": "value2_test"
       }
         }
-   POST /api/v1/Sheet_test/ with {“title:”: “Test_sheet18”}
+      ```
+      6) Update title sheet: 
+    ```console
+   curl -X POST -H "Content-type: application/json" http://localhost:8000/api/v1/Test_sheet/ -d '{"title":"Test_sheet18"} 
+     ```
+    
+      ```
          {
       "var1": {
         "value": "value1_test",
@@ -68,19 +100,62 @@
         "value": "value2_test",
         "result": "value2_test"
       }
-
-   4)  POST /api/v1/:sheet_id/:cell_id accept params {"name": "cell_name", "value": "1"} implements UPSERT strategy (update or insert) for both sheet_id
+   ```
+   
+   5) POST /api/v1/:sheet_id/:cell_id accept params {"name": "cell_name", "value": "1"} implements UPSERT strategy (update or insert) for both sheet_id
       1) 201 if the cell name and cell value is OK
-      2) 422 if the cell name or cell value is not OK e.g. new cell name or cell value is not suitable (read https://support.microsoft.com/en-gb/office/use-a-screen-reader-to-name-a-cell-or-data-range-in-excel-e8b55e7a-2cfd-40c4-9ea9-e738aa24e32c
-)
-   3) 409 if the new cell name has already been created until request
-      3) Добавить новую ячейку: curl -X POST -H "Content-type: application/json" http://localhost:8000/api/v1/Test_sheet/var1 -d '{}
-   4) Изменить название ячейки без value: curl -X POST -H "Content-type: application/json" http://localhost:8000/api/v1/Test_sheet/var1 -d '{"name":"name_new"} 
-   5) Изменить название ячейки с value: curl -X POST -H "Content-type: application/json" http://localhost:8000/api/v1/Test_sheet/var1 -d '{"name":"name_new", "value":"value_new"} 
-   6) Изменить value : curl -X POST -H "Content-type: application/json" http://localhost:8000/api/v1/Test_sheet/var1 -d '{"value":"value_new"}
+      2) 422 if the cell name or cell value is not OK e.g. new cell name or cell value is not suitable (read https://support.microsoft.com/en-gb/office/use-a-screen-reader-to-name-a-cell-or-data-range-in-excel-e8b55e7a-2cfd-40c4-9ea9-e738aa24e32c)
+      3) 409 if the new cell name has already been created until request
+      4) insert new cell: 
+    ```console
+    curl -X POST -H "Content-type: application/json" http://localhost:8000/api/v1/Test_sheet/var2 -d '{}
+    ```
+    ```
+    {
+   "name":"var2",
+   "value":"1",
+   "result":”1"
+	}
+    ```
+   
+      5) Update name cell without value: 
+    ```console
+   curl -X POST -H "Content-type: application/json" http://localhost:8000/api/v1/Test_sheet/var1 -d '{"name":"name_new"} 
+     ```
+```
+    {
+   "name":"name_new",
+   "value":"1",
+   "result":"1"
+   }
+   ```
+	6) Update name cell with value: 
+   ```console
+   curl -X POST -H "Content-type: application/json" http://localhost:8000/api/v1/Test_sheet/var1 -d '{"name":"name_new", "value":"=1+2"} 
+   ```
+```
+    {
+   "name":"name_new",
+   "value":"=1+2",
+   "result":"3"
+   }
+   ```
+	7) update value of current cell : 
+   ```console   
+   curl -X POST -H "Content-type: application/json" http://localhost:8000/api/v1/Test_sheet/var1 -d '{"value":"=1+2"}
+   ```
 
+```
+    {
+   "name":"var1",
+   "value":"=1+2",
+   "result":"3"
+   }
+   ```
 
-**Тесты: "GET /" or "GET /api/v1/"**
+### Test cases:
+
+**"GET /" or "GET /api/v1/"**
 1) test_get_sheets -- checks status code 200 while url ENDPOINT(detail in file settings.py)
 2) test_get_sheets_check_key_sheets -- checks key Sheets in Sheets exist
 3) test_get_sheets_check_key_value_sheets -- checks key Sheets in Sheets is list
@@ -91,24 +166,20 @@
 8) test_get_sheets_id_type_data -- checks every id sheet is integer.
 9) test_get_sheets_title_type_data -- checks every title sheet is integer.
 
-**Тесты:  "GET /api/v1/:sheet_id" or "GET /api/v1/:sheet_id/"**
-
-_Заметки: sheet_wrong_title is wrong sheet._ 
+**"GET /api/v1/:sheet_id" or "GET /api/v1/:sheet_id/"**
 
 1) test_get_sheets -- checks status code 200 while url ENDPOINT(detail in file settings.py) + '<sheet_title>'
 2) test_get_necessary_wrong_sheet -- checks status code 404 while url ENDPOINT(detail in file settings.py)
 + '<sheet_wrong_title>' 
 
-**Тесты: "GET /api/v1/:sheet_id/:cell_id" or "/api/v1/:sheet_id/:cell_id/"**
-
-_Заметки: sheet_wrong_title is wrong sheet. cell_wrong_title is wrong cell of sheet._ 
+**"GET /api/v1/:sheet_id/:cell_id" or "/api/v1/:sheet_id/:cell_id/"**
 
 1) test_get_necessary_sheet_cell -- checks status code 200 while url ENDPOINT(detail in file settings.py) + '<sheet_title>' + '<cell_name>'
 2) test_get_necessary_wrong_sheet_cell -- checks status code 404 while url ENDPOINT(detail in file settings.py) + '<sheet_wrong_title>' + '<cell_name>'
 3) test_get_necessary_sheet_wrong_cell -- checks status code 404 while url  ENDPOINT(detail in file settings.py) + '<sheet_title>' + '<cell_wrong_name>'
 4) test_get_necessary_wrong_sheet_wrong_cell -- checks status code 404 while url ENDPOINT(detail in file settings.py) + '<sheet_wrong_title>' + '<cell_wrong_name>'
 
-**Тесты: "POST /api/v1/:sheet_id" with {“title”: “Test_sheep”} implements UPSERT strategy (update or insert) for both sheet_id**
+**"POST /api/v1/:sheet_id" with {“title”: “Test_sheep”} implements UPSERT strategy (update or insert) for both sheet_id**
 
 1) test_post_sheet -- checks change old title to a new title
 2) test_post_sheet_not_exist_title -- checks change if old title not exist
@@ -123,7 +194,7 @@ _Заметки: sheet_wrong_title is wrong sheet. cell_wrong_title is wrong cel
 11) test_post_sheet_wrong_name_contains_colon_closing_parenthesis_left -- checks POST json has 'title' and it contains ']'
 12) test_post_sheet_wrong_name_as_History checks POST json has 'title' -- and it is 'History'
 
-**Тесты: "POST /api/v1/:sheet_id/:cell_id accept params {“value”: “1”} implements UPSERT strategy (update or insert) for both sheet_id and cell_id"**
+**"POST /api/v1/:sheet_id/:cell_id accept params {“value”: “1”} implements UPSERT strategy (update or insert) for both sheet_id and cell_id"**
 
 1) test_post_new_cell_new_value -- checks change new cell to a new title and new value 
 2) test_post_cell_wrong_name_no_english checks POST json hasn't non english letters 
@@ -132,23 +203,11 @@ _Заметки: sheet_wrong_title is wrong sheet. cell_wrong_title is wrong cel
 5) test_post_new_cell_without_new_value checks POST --  json hasn't new value 
 6) test_post_new_value_without_name checks -- POST json hasn't new name cell
 
-** Тесты формул **
+**"Test of formula"
+
 1) test_post_new_value_with_simply_formula -- checks formula "=1"
 2) test_post_new_value_with_hard_formula -- checks formula "=((var2-(var3+var2))*var2)*(var3+var2)"
 3) test_post_new_value_without_formula -- checks value 1
 4) test_post_value_self_name -- checks formula "=var1"
-5) test_post_value_wrong_name -- checks formula  "=var1"
-6) test_post_value_wrong_symbols -- checks formula "=var1+&%"
-7) test_post_value_two_more_equal_sign -- checks formula "=var1+=var"
-
-command:
-curl -X POST -H "Content-type: application/json" http://localhost:8000/api/v1/Test_sheet1/ -d '{"value": "0"}'
-
-curl http://localhost:8000/api/v1/Test_sheet/
-
-pytest tests_views.py -s
-
- curl -X POST -H "Content-type: application/json" http://localhost:8000/api/v1/Test_sheet/var1 -d '{"name": "zrada", "value":""}'
-
- curl -X POST -H "Content-type: a
-pplication/json" http://localhost:8000/api/v1/Test_sheet/var1 -d '{ "value":"=((var2-(var3+var2))*var2)*(var3+var2)"}'
+5) test_post_value_wrong_symbols -- checks formula "=var1+&%"
+6) test_post_value_two_more_equal_sign -- checks formula "=var1+=var"
