@@ -16,7 +16,7 @@ def test_get_sheets():
     res = client.get(ENDPOINT)
     # Checks that def work is ok
     assert res.status_code == 200, "sheets are missing"
-    print("–   " + ENDPOINT + " has status code - 200")
+    print("Status OK –   checks status code 200 while url ENDPOINT(detail in file settings.py)")
 
 
 def test_get_sheets_check_key_sheets():
@@ -26,7 +26,7 @@ def test_get_sheets_check_key_sheets():
     print("\n" + test_get_sheets_check_key_sheets.__name__)
     res = client.get(ENDPOINT)
     assert res.get_json().get('Sheets') is not None, "Key \"Sheets\" isn't exist"
-    print("–    Key \"Sheets\" is exist")
+    print("Status OK –    checks key Sheets in Sheets exist")
 
 
 def test_get_sheets_check_key_value_sheets():
@@ -36,18 +36,17 @@ def test_get_sheets_check_key_value_sheets():
     print("\n" + test_get_sheets_check_key_value_sheets.__name__)
     res = client.get(ENDPOINT)
     assert isinstance(res.get_json()['Sheets'], list) is True, "Key \"Sheets\" value isn't list"
-    print("–    Key \"Sheets\" value is list")
+    print("Status OK–    checks key Sheets in sheets is list")
 
 
 def test_get_sheets_check_key_value_sheets_contain_dict():
     """
-    test_get_sheets_check_key_value_sheets_contain_dict
-     checks every sheet is dict
+    test_get_sheets_check_key_value_sheets_contain_dict checks every sheet is dict
     """
     print("\n" + test_get_sheets_check_key_value_sheets_contain_dict.__name__)
     res = client.get(ENDPOINT)
     assert all(isinstance(sheet, dict) for sheet in res.get_json()['Sheets']) is True, " \"Sheets\" Values aren't dict"
-    print("–     \"Sheets\" Values aren't dict")
+    print("Status OK–     value_sheets_contain_dict checks every sheet is dict")
 
 
 def test_get_sheets_count_columns():
@@ -58,7 +57,7 @@ def test_get_sheets_count_columns():
     res = client.get(ENDPOINT)
     test_data = set(len(sheet) for sheet in res.get_json()["Sheets"])
     assert test_data == {2}, str(test_data) + " Count sheets column isn't 2 "
-    print("–    Count sheets column is 2")
+    print("Status OK –    checks dict every sheet has two columns")
 
 
 def test_get_sheets_has_id():
@@ -69,7 +68,7 @@ def test_get_sheets_has_id():
     res = client.get(ENDPOINT)
     assert all(sheet.get('id') is not None for sheet in res.get_json()["Sheets"]) is True, \
         "Several tables don't have attribute 'id'"
-    print("–    All tables have attribute 'id'")
+    print("Status OK –    checks every id sheet is exits")
 
 
 def test_get_sheets_has_title():
@@ -80,7 +79,7 @@ def test_get_sheets_has_title():
     res = client.get(ENDPOINT)
     assert all(sheet.get('title') is not None for sheet in res.get_json()["Sheets"]) is True, \
         "Several tables don't have attribute 'title'"
-    print("–    All title have attribute 'title'")
+    print("Status OK –    checks every title sheet is exist")
 
 
 def test_get_sheets_id_type_data():
@@ -90,7 +89,7 @@ def test_get_sheets_id_type_data():
     print("\n" + test_get_sheets_id_type_data.__name__)
     res = client.get(ENDPOINT)
     assert all(isinstance(sheet['id'], int) for sheet in res.get_json()["Sheets"]) is True, "column 'id' not int"
-    print("–    All \"id\" sheets have type of data \"int\"")
+    print("Status OK –    checks every id sheet is integer")
 
 
 def test_get_sheets_title_type_data():
@@ -100,7 +99,7 @@ def test_get_sheets_title_type_data():
     print("\n" + test_get_sheets_title_type_data.__name__)
     res = client.get(ENDPOINT)
     assert all(isinstance(sheet['title'], str) for sheet in res.get_json()["Sheets"]) is True, "column 'title' not str"
-    print("–    All \"title\" sheets have type of data \"str\"")
+    print("Status OK –    checks every title sheet is string/text")
 
 
 # ------------------------------------------------
@@ -114,7 +113,8 @@ def test_get_necessary_sheet():
     res = client.get(ENDPOINT + sheet_name, method=['GET'])
     # Checks that def work is ok
     assert res.status_code == 200, "cells of sheet are missing"
-    print("–   " + ENDPOINT + "+'<sheet_title>' has status code - 200")
+    print("Status OK –    while url ENDPOINT(detail in file settings.py) + '<sheet_title>'")
+
 
 
 def test_get_necessary_wrong_sheet():
@@ -127,7 +127,7 @@ def test_get_necessary_wrong_sheet():
     res = client.get(ENDPOINT + sheet_name, method=['GET'])
     # Checks that def work is ok
     assert res.status_code == 404, "cells of sheet are creating"
-    print("–   " + ENDPOINT + "+'<sheet_title>' has status code - 404")
+    print("Status OK –   checks status code 404 while url ENDPOINT(detail in file settings.py) + '<sheet_wrong_title>'")
 
 
 # ------------------------------------------------
@@ -143,12 +143,12 @@ def test_get_necessary_sheet_cell():
     res = client.get(ENDPOINT + sheet_name + cell_name, method=['GET'])
     # Checks that def work is ok
     assert res.status_code == 200, "cell of sheet is missing"
-    print("–   " + ENDPOINT + "+'<sheet_title>' + '<cell_name>' has status code - 200")
+    print("Status OK –   checks status code 200 while url ENDPOINT(detail in file settings.py) + '<sheet_title>' + '<cell_name>'")
 
 
 def test_get_necessary_wrong_sheet_cell():
     """
-    test_get_necessary_sheet checks status code 404 while url
+    test_get_necessary_wrong_sheet_cell checks status code 404 while url
     ENDPOINT(detail in file settings.py) + '<sheet_wrong_title>' + '<cell_name>'
     """
     print("\n" + test_get_necessary_wrong_sheet_cell.__name__)
@@ -157,12 +157,12 @@ def test_get_necessary_wrong_sheet_cell():
     res = client.get(ENDPOINT + sheet_name + cell_name, method=['GET'])
     # Checks that def work is ok
     assert res.status_code == 404, "sheet is creating"
-    print("–   " + ENDPOINT + "+'<sheet_wrong_title>' + '<sheet_title>' has status code - 404")
+    print("Status OK –  necessary_sheet checks status code 404 while url ENDPOINT(detail in file settings.py) + '<sheet_wrong_title>' + '<cell_wrong_name>'")
 
 
 def test_get_necessary_wrong_sheet_wrong_cell():
     """
-    test_get_necessary_sheet checks status code 404 while url
+    test_get_necessary_wrong_sheet_wrong_cell checks status code 404 while url
     ENDPOINT(detail in file settings.py) + '<sheet_wrong_title>' + '<cell_wrong_name>'
     """
     print("\n" + test_get_necessary_wrong_sheet_wrong_cell.__name__)
@@ -173,7 +173,7 @@ def test_get_necessary_wrong_sheet_wrong_cell():
     res.set_data(data_of_cell)
     # Checks that def work is ok
     assert res.status_code == 404, "wrong is creating"
-    print("–   " + ENDPOINT + "+'<sheet_wrong_title>' + '<sheet_wrong_title>' has status code - 404")
+    print("Status OK –  necessary_sheet checks status code 404 while url ENDPOINT(detail in file settings.py) + '<sheet_wrong_title>' + '<cell_wrong_name>'")
 
 
 # ------------------------------------------------
@@ -194,6 +194,8 @@ def test_post_sheet():
     }
     res = client.post(ENDPOINT+"zrada/", json=data)
     assert res.status_code == 200, "not changes title sheet"
+    print("Status OK –   change old title to a new title")
+
 
 
 def test_post_sheet_not_exist_title():
@@ -206,6 +208,7 @@ def test_post_sheet_not_exist_title():
     }
     res = client.post(ENDPOINT+"Test_sheet434345/", json=data)
     assert res.status_code == 404, "finds not exist sheet"
+    print("Status OK –   checks change if old title not exist")
 
 
 def test_post_sheet_not_json_title():
@@ -218,6 +221,7 @@ def test_post_sheet_not_json_title():
     }
     res = client.post(ENDPOINT+"Test_sheet/", json=data)
     assert res.status_code == 422, "wrong with post json. title1 is not title"
+    print("Status OK –   checks POST json not has 'title'")
 
 
 def test_post_sheet_wrong_name_as_empty():
@@ -230,6 +234,8 @@ def test_post_sheet_wrong_name_as_empty():
     }
     res = client.post(ENDPOINT+"Test_sheet/", json=data)
     assert res.status_code == 422, "post json 'title' is empty"
+    print("Status OK –   checks POST json has 'title' but it is \"\"")
+
 
 
 def test_post_sheet_wrong_len_name_32_and_more():
@@ -242,6 +248,7 @@ def test_post_sheet_wrong_len_name_32_and_more():
     }
     res = client.post(ENDPOINT + "Test_sheet/", json=data)
     assert res.status_code == 422, "len title not has len =>32"
+    print("Status OK –   checks POST json has len 'title' =>32")
 
 
 def test_post_sheet_wrong_name_contains_slash():
@@ -254,6 +261,7 @@ def test_post_sheet_wrong_name_contains_slash():
     }
     res = client.post(ENDPOINT + "Test_sheet/", json=data)
     assert res.status_code == 422, " title not has symbols /"
+    print("Status OK –   checks POST json has 'title' and it contains '\\'")
 
 
 def test_post_sheet_wrong_name_contains_colon_question_mark():
@@ -266,6 +274,7 @@ def test_post_sheet_wrong_name_contains_colon_question_mark():
     }
     res = client.post(ENDPOINT + "Test_sheet/", json=data)
     assert res.status_code == 422, " title not has symbols ?"
+    print("Status OK –   checks POST json has 'title' and it contains '?'")
 
 
 def test_post_sheet_wrong_name_contains_asterisk_sign():
@@ -278,6 +287,7 @@ def test_post_sheet_wrong_name_contains_asterisk_sign():
     }
     res = client.post(ENDPOINT + "Test_sheet/", json=data)
     assert res.status_code == 422, " title not has symbols *"
+    print("Status OK –   checks POST json has 'title' and it contains '*'")
 
 
 def test_post_sheet_wrong_name_contains_colon_sign():
@@ -290,6 +300,7 @@ def test_post_sheet_wrong_name_contains_colon_sign():
     }
     res = client.post(ENDPOINT + "Test_sheet/", json=data)
     assert res.status_code == 422, " title not has symbols :"
+    print("Status OK –   checks POST json has 'title' and it contains ':'")
 
 
 def test_post_sheet_wrong_name_contains_colon_closing_parenthesis_right():
@@ -302,6 +313,7 @@ def test_post_sheet_wrong_name_contains_colon_closing_parenthesis_right():
     }
     res = client.post(ENDPOINT + "Test_sheet/", json=data)
     assert res.status_code == 422, " title not has symbols ["
+    print("Status OK –   checks POST json has 'title' and it contains '['")
 
 
 def test_post_sheet_wrong_name_contains_colon_closing_parenthesis_left():
@@ -314,6 +326,8 @@ def test_post_sheet_wrong_name_contains_colon_closing_parenthesis_left():
     }
     res = client.post(ENDPOINT + "Test_sheet/", json=data)
     assert res.status_code == 422, " title not has symbol ]"
+    print("Status OK –   checks POST json has 'title' and it contains ']'")
+
 
 
 def test_post_sheet_wrong_name_as_History():
@@ -326,6 +340,7 @@ def test_post_sheet_wrong_name_as_History():
     }
     res = client.post(ENDPOINT + "Test_sheet/", json=data)
     assert res.status_code == 422, " title not has name as 'History'"
+    print("Status OK –   checks POST json has 'title' and it contains ']'")
 
 # ------------------------------------------------
 # test def post_necessary_cell
@@ -349,6 +364,8 @@ def test_post_new_cell_new_value():
     }
     res = client.post(ENDPOINT+"Test_sheet/zrada/", json=data)
     assert res.status_code == 200, "not changes name cell with a new value"
+    print("Status OK –   change new cell to a new title and new value")
+
 
 
 def test_post_cell_wrong_name_no_english():
@@ -362,6 +379,7 @@ def test_post_cell_wrong_name_no_english():
     }
     res = client.post(ENDPOINT+"Test_sheet/var1/", json=data)
     assert res.status_code == 422, "not changes name cell with a new value"
+    print("Status OK –   checks POST json hasn't non english letters")
 
 
 def test_post_cell_wrong_name_as_gap():
@@ -387,6 +405,7 @@ def test_post_cell_wrong_name_as_gap():
     }
     res = client.post(ENDPOINT+"Test_sheet/var1/", json=data)
     assert res.status_code == 422, "add wrong name cell (right)"
+    print("Status OK –   checks POST json hasn't gas")
 
 
 def test_insert_post_new_already_exits_cell():
@@ -397,6 +416,7 @@ def test_insert_post_new_already_exits_cell():
     data = {}
     res = client.post(ENDPOINT+"Test_sheet/var1/", json=data)
     assert res.status_code == 409, "add the new cell name has already been created until request"
+    print("Status OK –   checks POST json hasn't new value and new name")
 
 
 def test_post_new_cell_without_new_value():
@@ -414,6 +434,7 @@ def test_post_new_cell_without_new_value():
     }
     res = client.post(ENDPOINT+"Test_sheet/zrada/", json=data)
     assert res.status_code == 200, "wrong without new value"
+    print("Status OK –   checks POST json hasn't new value")
 
 
 def test_post_new_value_without_name():
@@ -433,6 +454,7 @@ def test_post_new_value_without_name():
     res = client.post(ENDPOINT+"Test_sheet/var1/", json=data)
 
     assert res.status_code == 200, "wrong without name"
+    print("Status OK –   checks POST json hasn't new name cell")
 
 # ------------------------------------------------
 # test formula
@@ -448,6 +470,7 @@ def test_post_new_value_with_simply_formula():
     res = client.post(ENDPOINT+"Test_sheet/var1/", json=data)
 
     assert res.status_code == 200, "wrong without formula"
+    print("Status OK –   checks formula \"=1\"")
 
 
 def test_post_new_value_with_hard_formula():
@@ -460,6 +483,7 @@ def test_post_new_value_with_hard_formula():
     }
     res = client.post(ENDPOINT+"Test_sheet/var1/", json=data)
     assert res.status_code == 200, "wrong formula"
+    print("Status OK –   checks formula \"=((var2-(var3+var2))*var2)*(var3+var2)\"")
 
 
 def test_post_new_value_without_formula():
@@ -473,6 +497,7 @@ def test_post_new_value_without_formula():
     res = client.post(ENDPOINT+"Test_sheet/var1/", json=data)
 
     assert res.status_code == 200, "wrong without formula"
+    print("Status OK –   checks formula 1")
 
 
 def test_post_value_self_name():
@@ -486,32 +511,21 @@ def test_post_value_self_name():
     res = client.post(ENDPOINT+"Test_sheet/var1/", json=data)
 
     assert res.status_code == 422, "self name can not in the formula"
-
-
-def test_post_value_wrong_name():
-    """
-      test_post_value_wrong_name checks formula  "=var1"
-     """
-    print("\n" + test_post_value_wrong_name.__name__)
-    data = {
-        "value": "=var1"
-    }
-    res = client.post(ENDPOINT+"Test_sheet/var1/", json=data)
-
-    assert res.status_code == 422, "self name can not in the formula"
+    print("Status OK –   checks formula \"=var1\" if cell name is 'var1'")
 
 
 def test_post_value_wrong_symbols():
     """
       test_post_value_wrong_symbols checks formula "=var1+&%"
      """
-    print("\n" + test_post_value_wrong_name.__name__)
+    print("\n" + test_post_value_wrong_symbols.__name__)
     data = {
         "value": "=var1+&%"
     }
     res = client.post(ENDPOINT+"Test_sheet/var1/", json=data)
 
     assert res.status_code == 422, "wrong symbols can not in the formula"
+    print("Status OK –   checks formula \"=var1+&%\"")
 
 
 def test_post_value_two_more_equal_sign():
@@ -525,3 +539,4 @@ def test_post_value_two_more_equal_sign():
     res = client.post(ENDPOINT+"Test_sheet/var1/", json=data)
 
     assert res.status_code == 422, "two_more_equal_sign can not in the formula"
+    print("Status OK –   checks formula \"=var1+=var\"")

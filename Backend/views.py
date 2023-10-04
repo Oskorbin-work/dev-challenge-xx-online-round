@@ -15,7 +15,7 @@ import functions.POST.sheet as post_sheet
 import functions.sheet as common_sheet
 import functions.GET.cell as get_cell
 import functions.POST.cell as post_cell
-import functions.cell as common_cell
+import tests.run as test_run
 
 
 @app.route(ENDPOINT, methods=['GET'])
@@ -145,6 +145,14 @@ def redirect_main():
     :return: path to URL "api/v1/"
     """
     return redirect(url_for("get_sheets"))
+
+
+@app.route(ENDPOINT +"/tests", methods=['GET'], strict_slashes=False)
+def tests():
+    """
+    run tests
+    """
+    return test_run.run_tests()
 
 
 
