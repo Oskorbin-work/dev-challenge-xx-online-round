@@ -1,6 +1,6 @@
 # List Of Contents
+
 <!-- TOC -->
-* [List Of Contents](#list-of-contents)
 * [Start Project](#start-project)
   * [Run tests](#run-tests)
   * [Note to projects (It is important):](#note-to-projects-it-is-important)
