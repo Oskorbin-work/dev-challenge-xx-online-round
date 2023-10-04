@@ -1,0 +1,21 @@
+version: '3'
+services:
+  flask:
+    build: ./backend
+
+    container_name: backend-flask
+
+    environment:
+
+      - FLASK_ENV=development
+
+      - PYTHONUNBUFFERED=True
+
+    restart: on-failure
+
+    volumes:
+      - ./backend:/backend
+    ports:
+      - "8080:8080"
+    command:
+      sh -c "python main.py"
